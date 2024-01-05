@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using static System.Random;
 using System.Text;
+using System.IO;
 internal class Program
 {
     private static void print(int wrongguess) //counts wrong guesses for up to 6 attempts
@@ -78,12 +79,20 @@ internal class Program
         }
         return correct;
     }
-    private static void printLine(string random)
+    private static void printLine(List<char> guess, string random)
     {
         Console.Write("\r");
         foreach (char c in random)
         {
-            Console.Write("_");
+            if (guess.Contains(c))
+            {
+                Console.Write(c);
+            }
+            else
+            {
+                Console.Write("_");
+            }
+            
         }
     
 }
@@ -101,13 +110,20 @@ internal class Program
     }
     static void Main(string[] args)
     {
-        Console.WriteLine("_________________________________________________");
+        Console.Write("_________________________________________________");
         int currWrong = 0;
         int currRight=0;
 
         // create random list
         Random random = new Random();
-        List<string> dictionary = new List<string> { "tree", }; //"enter", "jumper", "robots", "center", "invite", "cradle", "flower", "lame", "person", "card", "heart", "pose" };
+        List<string> dictionary = new List<string> (15);
+        string line;
+        StreamReader file = new StreamReader(@"C:\Users\micha\Desktop\GitHub\HangMan\HangMan\Words.txt");
+        while ((line = file.ReadLine()) != null) // place name age and height in seperate arrays
+        {
+            dictionary.Add(line);
+            
+        }
         int choose = random.Next(dictionary.Count);
         string word = dictionary[choose];
 
@@ -129,7 +145,7 @@ internal class Program
             Console.Write("\nLetters guessed so far: ");
             foreach (char letter in guessed)
             {
-                Console.WriteLine(letter + " ");
+                Console.Write(letter + " ");
             }
 
             Console.WriteLine("Guess a new letter: ");
@@ -142,7 +158,7 @@ internal class Program
                 guessLetter = Console.ReadLine()[0];
                 print(currWrong);
                 currRight = printWord(guessed, word);
-                printLine(word);
+                printLine(guessed, word);
             }
             else
             {
@@ -152,7 +168,8 @@ internal class Program
                     print(currWrong);
                     guessed.Add(guessLetter);
                     currRight = printWord(guessed, word) ;  
-                    printLine(word);    
+                    printLine(guessed, word);
+                    Console.WriteLine("You guessed Right!");
                 }
                 else if (right == false) // guess wrong
                 {
@@ -160,7 +177,8 @@ internal class Program
                     print(currWrong);
                     guessed.Add(guessLetter);
                     currRight = printWord(guessed, word);
-                    printLine(word);
+                    printLine(guessed ,word);
+                    Console.WriteLine("You guessed Wrong!");
                 }
 
             }
